@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Realidade Aumentada - Régio Quest</title>
+    <!-- Framework de Realidade Aumentada -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <!-- Regras visuais globais -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Garante que o body seja transparente sob a cena AR */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =====================================================
+         1. CENA DE REALIDADE AUMENTADA (A-Frame / WebXR)
+         ===================================================== -->
+    <a-scene
+        id="ar-scene"
+        embedded
+        vr-mode-ui="enabled: false"
+        renderer="antialias: true; alpha: true"
+        background="transparent: true"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
+    >
+        <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
+    </a-scene>
+
+    <!-- =====================================================
+         2. OVERLAY DE INTERFACE FLUTUANTE (por cima da câmara)
+         ===================================================== -->
+    <div class="ar-overlay" id="ar-overlay">
+
+        <!-- Barra de Progresso — Topo -->
+        <div class="ar-progress-bar" id="ar-progress-bar">
+            <div class="ar-progress-segment filled" id="seg-1"></div>
+            <div class="ar-progress-segment"        id="seg-2"></div>
+            <div class="ar-progress-segment"        id="seg-3"></div>
+            <div class="ar-progress-segment"        id="seg-4"></div>
+        </div>
+
+        <!-- Zona inferior: Avatar + Caixa de Diálogo -->
+        <div class="ar-bottom" id="ar-bottom">
+
+            <!-- Avatar do Professor José Régio -->
+            <img
+                src="jose-regio.png"
+                alt="José Régio"
+                class="ar-avatar"
+                id="ar-avatar"
+            >
+
+            <!-- Caixa de Diálogo Ocre -->
+            <div class="ar-dialog" id="ar-dialog">
+                <p class="ar-dialog-text" id="ar-dialog-text">
+                    Deixei algo escondido nesta casa antes de partir.
+                    Nunca contei a ninguém. Se encontrares tudo,
+                    podes ficar com o segredo.
+                </p>
+                <!-- Seta de avançar -->
+                <button class="ar-dialog-arrow" id="btn-next-dialog" aria-label="Avançar diálogo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 0 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão "Próxima Sala" — oculto por padrão, aparece no final -->
+    <a href="jornada.html" class="ar-next-btn" id="btn-proxima-sala">
+        Próxima Sala
+    </a>
+
+    <!-- =====================================================
+         3. LÓGICA DE DIÁLOGO (Progressão de falas)
+         ===================================================== -->
+    <script>
+        const dialogues = [
+            {
+                step: 1,
+                text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.",
+                showAvatar: false
+            },
+            {
+                step: 2,
+                text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.",
+                showAvatar: false
+            },
+            {
+                step: 3,
+                text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.",
+                showAvatar: true
+            },
+            {
+                step: 4,
+                final: true
+            }
+        ];
+
+        const segments  = document.querySelectorAll('.ar-progress-segment');
+        const dialogText = document.getElementById('ar-dialog-text');
+        const avatar     = document.getElementById('ar-avatar');
+        const nextBtn    = document.getElementById('btn-proxima-sala');
+        const btnNext    = document.getElementById('btn-next-dialog');
+
+        let currentStep = 0;
+
+        function updateUI(step) {
+            const d = dialogues[step];
+
+            // Texto do diálogo
+            dialogText.textContent = d.text;
+
+            // Avatar
+            if (d.showAvatar) {
+                avatar.classList.remove('hidden');
+            } else {
+                avatar.classList.add('hidden');
+            }
+
+            // Barra de progresso
+            segments.forEach((seg, i) => {
+                seg.classList.toggle('filled', i <= step);
+            });
+
+            // Botão final
+            if (d.final) {
+                btnNext.style.display = 'none';
+                nextBtn.classList.add('visible');
+            }
+        }
+
+        // Avançar diálogo ao clicar na seta
+        btnNext.addEventListener('click', () => {
+            if (currentStep < dialogues.length - 1) {
+                currentStep++;
+                updateUI(currentStep);
+            }
+        });
+
+        // Estado inicial
+        updateUI(0);
+        avatar.classList.add('hidden');
+    </script>
+
+</body>
+</html>

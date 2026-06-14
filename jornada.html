@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jornada - Régio Quest</title>
+    <!-- Link para as regras visuais externas -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="jornada-page">
+
+    <!-- Cabeçalho Ocre -->
+    <header class="jornada-header">
+        <h1 class="title-brand-jornada">
+            Conheça a<br>casa do Régio
+        </h1>
+        <!-- Ícone de localização no canto superior direito -->
+        <a href="#" class="location-pin" id="btn-location">
+            <img src="Icones/pin.png" alt="Localização">
+        </a>
+    </header>
+
+    <!-- Área de Visualização do Mapa -->
+    <main class="map-view">
+        <div class="map-container" style="height: 580px; max-width: 340px;">
+            <!-- Nós / Cómodos da Casa -->
+            
+            <!-- 1. Hall de entrada (ATIVO - Link para ar.html) -->
+            <!-- 1. Hall de entrada — topo esquerdo -->
+            <div class="map-node active" style="left: 25%; top: 12%;" id="node-hall">
+                <a href="ar.html" class="node-circle" aria-label="Entrar no Hall de entrada">
+                    <img src="Icones/porta.png" alt="Porta - Hall de entrada">
+                </a>
+                <span class="node-label">Hall de entrada</span>
+            </div>
+
+            <!-- 2. Cozinha — meio esquerdo -->
+            <div class="map-node disabled" style="left: 25%; top: 40%;" id="node-cozinha">
+                <div class="node-circle">
+                    <img src="Icones/panela.png" alt="Panela - Cozinha">
+                </div>
+                <span class="node-label">Cozinha</span>
+            </div>
+
+            <!-- 3. Sala dos Cristos — topo direito -->
+            <div class="map-node disabled" style="left: 75%; top: 28%;" id="node-cristos">
+                <div class="node-circle">
+                    <img src="Icones/cruz.png" alt="Cruz - Sala dos Cristos">
+                </div>
+                <span class="node-label">Sala dos Cristos</span>
+            </div>
+
+            <!-- 4. Biblioteca — centro -->
+            <div class="map-node disabled" style="left: 50%; top: 56%;" id="node-biblioteca">
+                <div class="node-circle">
+                    <img src="Icones/livro.png" alt="Livro - Biblioteca">
+                </div>
+                <span class="node-label">Biblioteca</span>
+            </div>
+
+            <!-- 5. Quarto do poeta — baixo esquerdo -->
+            <div class="map-node disabled" style="left: 25%; top: 76%;" id="node-quarto">
+                <div class="node-circle">
+                    <img src="Icones/cama.png" alt="Cama - Quarto do poeta">
+                </div>
+                <span class="node-label">Quarto do poeta</span>
+            </div>
+
+            <!-- 6. Salão nobre — baixo direito -->
+            <div class="map-node disabled" style="left: 75%; top: 88%;" id="node-salao">
+                <div class="node-circle">
+                    <img src="Icones/coroa.png" alt="Coroa - Salão nobre">
+                </div>
+                <span class="node-label">Salão nobre</span>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

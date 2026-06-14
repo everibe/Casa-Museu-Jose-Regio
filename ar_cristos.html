@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sala dos Cristos - Régio Quest</title>
+    
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+        
+        /* Estilização das Opções do Quiz baseada no teu Figma */
+        .quiz-container { display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 15px 0; }
+        .quiz-option { 
+            background: #FFFDF9; border: 2px solid #E3D9C6; color: #333333; 
+            padding: 14px 16px; border-radius: 12px; text-align: left; 
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%;
+        }
+        .quiz-option:active, .quiz-option.selected { 
+            background: #D4AF37; color: #FFF; border-color: #D4AF37; 
+        }
+
+        /* Botão flutuante de Scan QR Code (Tela 11 e 12) */
+        .scan-overlay-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 20;
+            background: #D4AF37; border: none; padding: 10px; border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center;
+        }
+        .scan-overlay-btn img { width: 24px; height: 24px; }
+
+        /* Estado das pegadas de pista para a próxima sala (Tela 18) */
+        .steps-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; background: rgba(0,0,0,0.7); position: absolute; top:0; left:0; width:100%; z-index: 30; }
+        .steps-container p { font-size: 18px; color: #D4AF37; margin-bottom: 20px; font-weight: bold; }
+        .steps-icon { width: 80px; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="scan-overlay-btn" id="btn-scan-qr" onclick="simularEscaneamento()" aria-label="Escanear QR Code">
+        <img src="Icones/qr code.png" alt="QR" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3126/3126504.png'">
+    </button>
+
+    <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
+        <a-marker preset="hiro">
+            <a-cone position="0 0.5 0" material="color: #D4AF37; wireframe: false" radius-bottom="0.4" radius-top="0" height="1"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"></a-cone>
+        </a-marker>
+        <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
+    </a-scene>
+
+    <div class="ar-overlay" id="ar-overlay">
+
+        <div class="ar-progress-bar" id="ar-progress-bar">
+            <div class="ar-progress-segment filled" id="seg-1"></div>
+            <div class="ar-progress-segment filled" id="seg-2"></div>
+            <div class="ar-progress-segment"        id="seg-3"></div>
+            <div class="ar-progress-segment"        id="seg-4"></div>
+        </div>
+
+        <div class="ar-bottom" id="ar-bottom">
+            <img src="jose-regio.png" alt="José Régio" class="ar-avatar" id="ar-avatar" onerror="this.style.display='none'">
+
+            <div class="ar-dialog" id="ar-dialog" style="flex-direction: column; align-items: flex-start; min-height: 140px;">
+                <p class="ar-dialog-text" id="ar-dialog-text" style="width: 100%; margin-bottom: 10px;">
+                    [Toque no ícone do QR Code acima para escanear a Sala dos Cristos e começar a busca]
+                </p>
+                
+                <div class="quiz-container" id="quiz-options-zone" style="display: none;"></div>
+
+                <button class="ar-dialog-arrow" id="btn-next-dialog" aria-label="Avançar" style="align-self: flex-end; display: none;">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 0 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="steps-container" id="steps-screen">
+        <p>Siga as pegadas até à Cozinha...</p>
+        <img src="Icones/pegadas.png" class="steps-icon" alt="Pegadas" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7036/7036814.png'">
+        <br><br>
+        <a href="jornada.html" class="ar-next-btn" style="position: relative; display: inline-block; margin-top: 20px;">
+            Avançar no Mapa
+        </a>
+    </div>
+
+    <script>
+        // Sequência exata de telas do teu novo Figma
+        const telasFluxo = [
+            { text: "Fiz por ele o que nunca faria por uma obra de arte de museu, tratei-o como se fosse vivo. Encontra o Cristo Crucificado.", isQuiz: false, showArrow: true },
+            { 
+                text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
+                isQuiz: true,
+                options: ["A) Decoração de igrejas", "B) Enxoval das noivas", "C) Oferendas fúnebres", "D) Amuletos de viagem"],
+                correct: 1, // B
+                feedback: "Acertaste! Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento para proteção da casa."
+            },
+            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo. Procure a próxima pista lá.", isQuiz: false, showArrow: false, isFinal: true }
+        ];
+
+        const dialogText = document.getElementById('ar-dialog-text');
+        const quizZone   = document.getElementById('quiz-options-zone');
+        const btnNext    = document.getElementById('btn-next-dialog');
+        const btnQr      = document.getElementById('btn-scan-qr');
+        const stepsScreen = document.getElementById('steps-screen');
+
+        let currentStep = -1; // -1 significa aguardando o Scan do QR code inicial
+
+        function simularEscaneamento() {
+            // Remove o botão de scan e inicia a experiência da sala
+            btnQr.style.display = 'none';
+            currentStep = 0;
+            updateScreen();
+        }
+
+        function updateScreen() {
+            const data = telasFluxo[currentStep];
+            
+            if (!data) return;
+
+            dialogText.textContent = data.text;
+
+            if (data.isQuiz) {
+                btnNext.style.display = 'none'; 
+                quizZone.innerHTML = "";
+                quizZone.style.display = "flex";
+
+                data.options.forEach((opcao, idx) => {
+                    const button = document.createElement('button');
+                    button.className = "quiz-option";
+                    button.textContent = opcao;
+                    button.onclick = () => {
+                        quizZone.style.display = "none";
+                        // Exibe feedback da resposta (Tela 16 do Figma)
+                        dialogText.textContent = data.feedback;
+                        btnNext.style.display = 'block'; 
+                    };
+                    quizZone.appendChild(button);
+                });
+            } else {
+                quizZone.style.display = "none";
+                btnNext.style.display = data.showArrow ? 'block' : 'none';
+                
+                if (data.isFinal) {
+                    // Após 3 segundos no diálogo final, mostra o ecrã de pegadas (Tela 17/18)
+                    setTimeout(() => {
+                        stepsScreen.style.display = "flex";
+                    }, 3500);
+                }
+            }
+        }
+
+        btnNext.addEventListener('click', () => {
+            if (currentStep < telasFluxo.length - 1) {
+                currentStep++;
+                updateScreen();
+            }
+        });
+    </script>
+</body>
+</html>
