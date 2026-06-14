@@ -10,45 +10,100 @@
     
     <link rel="stylesheet" href="style.css">
     <style>
-        html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+        html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; width: 100%; height: 100%; }
         
-        /* Botões de Navegação Duplos (Esquerda e Direita) */
+        /* Forçar o overlay a ocupar o ecrã inteiro e empurrar o conteúdo para baixo */
+        .ar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        /* Caixa de Diálogo colada estritamente ao fundo da página (Aba Ocre) */
+        .ar-bottom {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            pointer-events: auto;
+        }
+
+        .ar-dialog {
+            width: 100%;
+            min-height: 220px;
+            background: #DDA128; /* Tom ocre exato da imagem */
+            border-radius: 32px 32px 0 0; /* Bordas arredondadas apenas no topo */
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            border: none;
+        }
+
+        .ar-dialog-text {
+            color: #FFFFFF;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: left;
+            margin: 0 0 20px 0;
+            font-weight: 500;
+        }
+
+        /* Botões de Navegação com Círculo Branco do Figma */
         .nav-buttons-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            margin-top: 10px;
+            pointer-events: auto;
         }
 
-        .btn-nav-arrow {
-            background: none;
+        .btn-nav-circle {
+            background: #FFFDF9;
             border: none;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease;
         }
-        .btn-nav-arrow svg {
-            width: 32px;
-            height: 32px;
-            fill: #D4AF37;
-        }
-        .btn-nav-arrow:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
+        .btn-nav-circle:active { transform: scale(0.9); }
+        .btn-nav-circle svg { width: 28px; height: 28px; fill: #DDA128; }
+        .btn-nav-circle:disabled { opacity: 0; pointer-events: none; }
 
-        /* Ajuste do Avatar conforme as Telas 7, 8, 9 e 10 */
-        .ar-avatar {
-            width: 100px;
-            height: auto;
-            bottom: 20px;
-            left: 15px;
-            z-index: 15;
-            transition: opacity 0.3s ease;
+        /* Botão Próxima Sala Vermelho Isolado (Tela 10) */
+        .ar-next-btn-red {
+            display: none;
+            background: #B31A1A;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 0;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            width: 85%;
+            text-align: center;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
+            box-shadow: 0 4px 15px rgba(179,26,26,0.4);
+            cursor: pointer;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -59,15 +114,21 @@
     <audio id="audio-3" src="Narrativas-Audios/1 Hall de entrada 3.mp3"></audio>
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
+        
         <a-marker preset="hiro">
-            <a-box position="0 0.5 0" material="color: #d4af37; opacity: 0.8;"></a-box>
+            
+            <a-image id="ar-regio-avatar" src="Icones/jose-regio.png" position="0 0.8 0" width="1.6" height="2.2" visible="true"></a-image>
+            
+            <a-image id="ar-pegadas" src="Icones/pegadas.png" position="0 0.02 0.3" rotation="-90 0 0" width="1.8" height="1.8" visible="false"></a-image>
+            
         </a-marker>
+        
         <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
     </a-scene>
 
     <div class="ar-overlay" id="ar-overlay">
 
-        <div class="ar-progress-bar" id="ar-progress-bar">
+        <div class="ar-progress-bar" id="ar-progress-bar" style="pointer-events: auto;">
             <div class="ar-progress-segment filled"></div>
             <div class="ar-progress-segment"></div>
             <div class="ar-progress-segment"></div>
@@ -75,41 +136,37 @@
         </div>
 
         <div class="ar-bottom" id="ar-bottom">
-            <img src="Icones/jose-regio.png" alt="José Régio" class="ar-avatar" id="ar-avatar">
-
-            <div class="ar-dialog" id="ar-dialog" style="flex-direction: column;">
+            <div class="ar-dialog" id="ar-dialog">
                 
-                <p class="ar-dialog-text" id="ar-dialog-text" style="width: 100%; margin: 0;"></p>
+                <p class="ar-dialog-text" id="ar-dialog-text"></p>
                 
                 <div class="nav-buttons-container" id="nav-buttons-zone">
-                    <button class="btn-nav-arrow" id="btn-prev-dialog" aria-label="Voltar">
+                    <button class="btn-nav-circle" id="btn-prev-dialog" aria-label="Voltar">
                         <svg viewBox="0 0 24 24">
                             <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
                         </svg>
                     </button>
 
-                    <button class="btn-nav-arrow" id="btn-next-dialog" aria-label="Avançar">
+                    <button class="btn-nav-circle" id="btn-next-dialog" aria-label="Avançar">
                         <svg viewBox="0 0 24 24">
                             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
                         </svg>
                     </button>
                 </div>
-
-                <button class="ar-next-btn" id="btn-proxima-sala" onclick="concluirSala()" style="position: relative; margin-top: 10px; width: 100%;">
-                    Próxima Sala
-                </button>
-
             </div>
         </div>
     </div>
 
+    <button class="ar-next-btn-red" id="btn-proxima-sala" onclick="concluirSala()">
+        Próxima Sala
+    </button>
+
     <script>
-        // Configuração exata das Telas 7, 8, 9 e 10
         const dialogues = [
-            { text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.", audioId: "audio-1", isFinal: false },
-            { text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.", audioId: "audio-2", isFinal: false },
-            { text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.", audioId: "audio-3", isFinal: false },
-            { text: "", audioId: null, isFinal: true } // Tela 10: Sem texto, apenas botão
+            { text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.", audioId: "audio-1", showRegio: true, showPegadas: false, isFinal: false },
+            { text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.", audioId: "audio-2", showRegio: true, showPegadas: false, isFinal: false },
+            { text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.", audioId: "audio-3", showRegio: true, showPegadas: false, isFinal: false },
+            { text: "", audioId: null, showRegio: false, showPegadas: true, isFinal: true } // Tela 10: Sem aba ocre, só pegadas AR e botão vermelho
         ];
 
         const segments = document.querySelectorAll('.ar-progress-segment');
@@ -117,6 +174,11 @@
         const btnPrev = document.getElementById('btn-prev-dialog');
         const btnNext = document.getElementById('btn-next-dialog');
         const btnProxima = document.getElementById('btn-proxima-sala');
+        const overlayInterface = document.getElementById('ar-overlay');
+        
+        // Entidades AR
+        const arRegio = document.getElementById('ar-regio-avatar');
+        const arPegadas = document.getElementById('ar-pegadas');
 
         let currentStep = 0;
 
@@ -130,32 +192,33 @@
         function updateUI() {
             const current = dialogues[currentStep];
 
-            // 1. Atualizar Texto ou ocultar para a Tela 10
             if (current.isFinal) {
-                dialogText.style.display = 'none';
-                document.getElementById('nav-buttons-zone').style.display = 'none';
-                btnProxima.style.display = 'block';
+                overlayInterface.style.display = 'none'; // Esconde a interface ocre e barra superior
+                btnProxima.style.display = 'block';     // Torna visível o botão vermelho
             } else {
-                dialogText.style.display = 'block';
+                overlayInterface.style.display = 'flex';
                 dialogText.textContent = current.text;
-                document.getElementById('nav-buttons-zone').style.display = 'flex';
                 btnProxima.style.display = 'none';
             }
 
-            // 2. Controlar ativação dos botões de navegação
+            // Gerir botões de navegação
             btnPrev.disabled = (currentStep === 0);
 
-            // 3. Atualizar a Barra de Progresso Superior
+            // Atualizar barra de progresso
             segments.forEach((seg, i) => {
                 seg.classList.toggle('filled', i <= currentStep);
             });
 
-            // 4. Gestão e Sincronização do Áudio
+            // Gerir visibilidade AR
+            arRegio.setAttribute('visible', current.showRegio);
+            arPegadas.setAttribute('visible', current.showPegadas);
+
+            // Sincronizar Áudios
             pararTodosAudios();
             if (current.audioId) {
                 const som = document.getElementById(current.audioId);
                 if (som) {
-                    som.play().catch(e => console.log("Áudio aguardando clique: ", e));
+                    som.play().catch(e => console.log("Áudio aguardando clique de interação."));
                 }
             }
         }
@@ -174,15 +237,11 @@
             }
         });
 
-        // Função do Botão "Próxima Sala" (Tela 10)
         function concluirSala() {
-            // Salva no navegador que o Hall foi feito!
             localStorage.setItem('hallConcluido', 'true');
-            // Redireciona de volta para o mapa da jornada
             window.location.href = "jornada.html";
         }
 
-        // Inicializar a página
         window.addEventListener('DOMContentLoaded', () => {
             updateUI();
         });
