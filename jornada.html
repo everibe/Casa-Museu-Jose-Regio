@@ -1,19 +1,90 @@
-<script>
-    // Verifica se o utilizador já completou o Hall de Entrada
-    if (localStorage.getItem('hallConcluido') === 'true') {
-        const nodeCristos = document.getElementById('node-cristos');
-        if (nodeCristos) {
-            // Remove o estado bloqueado e ativa-o visualmente
-            nodeCristos.classList.remove('disabled');
-            nodeCristos.classList.add('active');
-            
-            // Transforma o nó num link real para a Sala dos Cristos que criámos!
-            nodeCristos.innerHTML = `
-                <a href="ar_cristos.html" class="node-circle" aria-label="Entrar na Sala dos Cristos">
-                    <img src="Icones/cruz.png" alt="Cruz - Sala dos Cristos">
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jornada - Régio Quest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="jornada-page">
+
+    <header class="jornada-header">
+        <h1 class="title-brand-jornada">
+            Conheça a<br>casa do Régio
+        </h1>
+        <a href="#" class="location-pin" id="btn-location">
+            <img src="Icones/pin.png" alt="Localização">
+        </a>
+    </header>
+
+    <main class="map-view">
+        <div class="map-container" style="height: 580px; max-width: 340px;">
+            <div class="map-node active" style="left: 25%; top: 12%;" id="node-hall">
+                <a href="ar.html" class="node-circle" aria-label="Entrar no Hall de entrada">
+                    <img src="Icones/porta.png" alt="Porta - Hall de entrada">
                 </a>
+                <span class="node-label">Hall de entrada</span>
+            </div>
+
+            <div class="map-node disabled" style="left: 25%; top: 40%;" id="node-cozinha">
+                <div class="node-circle">
+                    <img src="Icones/panela.png" alt="Panela - Cozinha">
+                </div>
+                <span class="node-label">Cozinha</span>
+            </div>
+
+            <div class="map-node disabled" style="left: 75%; top: 28%;" id="node-cristos">
+                <div class="node-circle">
+                    <img src="Icones/cruz.png" alt="Cruz - Sala dos Cristos">
+                </div>
                 <span class="node-label">Sala dos Cristos</span>
-            `;
-        }
-    }
-</script>
+            </div>
+
+            <div class="map-node disabled" style="left: 50%; top: 56%;" id="node-biblioteca">
+                <div class="node-circle">
+                    <img src="Icones/livro.png" alt="Livro - Biblioteca">
+                </div>
+                <span class="node-label">Biblioteca</span>
+            </div>
+
+            <div class="map-node disabled" style="left: 25%; top: 76%;" id="node-quarto">
+                <div class="node-circle">
+                    <img src="Icones/cama.png" alt="Cama - Quarto do poeta">
+                </div>
+                <span class="node-label">Quarto do poeta</span>
+            </div>
+
+            <div class="map-node disabled" style="left: 75%; top: 88%;" id="node-salao">
+                <div class="node-circle">
+                    <img src="Icones/coroa.png" alt="Coroa - Salão nobre">
+                </div>
+                <span class="node-label">Salão nobre</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Verifica se o Hall de Entrada foi finalizado com sucesso
+            if (localStorage.getItem('hallConcluido') === 'true') {
+                const nodeCristos = document.getElementById('node-cristos');
+                
+                if (nodeCristos) {
+                    // Altera o estado visual: remove o cinzento (disabled) e ganha a cor ativa (active)
+                    nodeCristos.classList.remove('disabled');
+                    nodeCristos.classList.add('active');
+                    
+                    // Injeta a tag <a> para torná-lo clicável e responsivo para ar_cristos.html
+                    nodeCristos.innerHTML = `
+                        <a href="ar_cristos.html" class="node-circle" aria-label="Entrar na Sala dos Cristos">
+                            <img src="Icones/cruz.png" alt="Cruz - Sala dos Cristos">
+                        </a>
+                        <span class="node-label">Sala dos Cristos</span>
+                    `;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
