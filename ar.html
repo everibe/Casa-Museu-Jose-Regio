@@ -4,42 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Realidade Aumentada - Régio Quest</title>
-    <!-- Framework de Realidade Aumentada -->
+    
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <!-- Regras visuais globais -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Garante que o body seja transparente sob a cena AR */
-        html, body {
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            overflow: hidden;
+        html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+        
+        /* Ajuste para garantir que o avatar do José Régio fique posicionado como no teu Figma */
+        .ar-avatar {
+            width: 90px;
+            height: auto;
+            bottom: 20px;
+            left: 15px;
+            z-index: 15;
+            transition: opacity 0.3s ease;
         }
+        .ar-avatar.hidden { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <!-- =====================================================
-         1. CENA DE REALIDADE AUMENTADA (A-Frame / WebXR)
-         ===================================================== -->
-    <a-scene
-        id="ar-scene"
-        embedded
-        vr-mode-ui="enabled: false"
-        renderer="antialias: true; alpha: true"
-        background="transparent: true"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
-    >
+    <audio id="audio-1" src="Narrativas-Audios/1 Hall de entrada 1.mp3"></audio>
+    <audio id="audio-2" src="Narrativas-Audios/1 Hall de entrada 2.mp3"></audio>
+    <audio id="audio-3" src="Narrativas-Audios/1 Hall de entrada 3.mp3"></audio>
+
+    <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" background="transparent: true" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
+        
+        <a-marker preset="hiro">
+            <a-box position="0 0.5 0" material="color: #d4af37; opacity: 0.85;" animation="property: rotation; to: 0 360 0; loop: true; dur: 4000"></a-box>
+        </a-marker>
+        
         <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
     </a-scene>
 
-    <!-- =====================================================
-         2. OVERLAY DE INTERFACE FLUTUANTE (por cima da câmara)
-         ===================================================== -->
     <div class="ar-overlay" id="ar-overlay">
 
-        <!-- Barra de Progresso — Topo -->
         <div class="ar-progress-bar" id="ar-progress-bar">
             <div class="ar-progress-segment filled" id="seg-1"></div>
             <div class="ar-progress-segment"        id="seg-2"></div>
@@ -47,25 +48,13 @@
             <div class="ar-progress-segment"        id="seg-4"></div>
         </div>
 
-        <!-- Zona inferior: Avatar + Caixa de Diálogo -->
         <div class="ar-bottom" id="ar-bottom">
+            <img src="Icones/jose-regio.png" alt="José Régio" class="ar-avatar" id="ar-avatar">
 
-            <!-- Avatar do Professor José Régio -->
-            <img
-                src="jose-regio.png"
-                alt="José Régio"
-                class="ar-avatar"
-                id="ar-avatar"
-            >
-
-            <!-- Caixa de Diálogo Ocre -->
             <div class="ar-dialog" id="ar-dialog">
                 <p class="ar-dialog-text" id="ar-dialog-text">
-                    Deixei algo escondido nesta casa antes de partir.
-                    Nunca contei a ninguém. Se encontrares tudo,
-                    podes ficar com o segredo.
+                    Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.
                 </p>
-                <!-- Seta de avançar -->
                 <button class="ar-dialog-arrow" id="btn-next-dialog" aria-label="Avançar diálogo">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 0 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01z"/>
@@ -75,35 +64,16 @@
         </div>
     </div>
 
-    <!-- Botão "Próxima Sala" — oculto por padrão, aparece no final -->
-    <a href="jornada.html" class="ar-next-btn" id="btn-proxima-sala">
-        Próxima Sala
+    <a href="ar_cristos.html" class="ar-next-btn" id="btn-proxima-sala">
+        Próxima Sala: Sala dos Cristos
     </a>
 
-    <!-- =====================================================
-         3. LÓGICA DE DIÁLOGO (Progressão de falas)
-         ===================================================== -->
     <script>
         const dialogues = [
-            {
-                step: 1,
-                text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.",
-                showAvatar: false
-            },
-            {
-                step: 2,
-                text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.",
-                showAvatar: false
-            },
-            {
-                step: 3,
-                text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.",
-                showAvatar: true
-            },
-            {
-                step: 4,
-                final: true
-            }
+            { text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.", showAvatar: true, audioId: "audio-1" },
+            { text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.", showAvatar: true, audioId: "audio-2" },
+            { text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.", showAvatar: true, audioId: "audio-3" },
+            { text: "Investiga o espaço para encontrar a pista oculta.", showAvatar: true, audioId: null, final: true }
         ];
 
         const segments  = document.querySelectorAll('.ar-progress-segment');
@@ -114,32 +84,40 @@
 
         let currentStep = 0;
 
+        function pararTodosAudios() {
+            ['audio-1', 'audio-2', 'audio-3'].forEach(id => {
+                const a = document.getElementById(id);
+                if (a) { a.pause(); a.currentTime = 0; }
+            });
+        }
+
         function updateUI(step) {
             const d = dialogues[step];
-
-            // Texto do diálogo
             dialogText.textContent = d.text;
 
-            // Avatar
-            if (d.showAvatar) {
-                avatar.classList.remove('hidden');
-            } else {
-                avatar.classList.add('hidden');
+            // Controla a visibilidade do PNG do José Régio
+            if (d.showAvatar) { avatar.classList.remove('hidden'); } 
+            else { avatar.classList.add('hidden'); }
+
+            // Atualiza a barra de progresso do topo
+            segments.forEach((seg, i) => { seg.classList.toggle('filled', i <= step); });
+
+            // Gestão dos Áudios MP3
+            pararTodosAudios();
+            if (d.audioId) {
+                const som = document.getElementById(d.audioId);
+                if (som) {
+                    som.play().catch(e => console.log("Os navegadores exigem uma interação prévia do utilizador para tocar som: ", e));
+                }
             }
 
-            // Barra de progresso
-            segments.forEach((seg, i) => {
-                seg.classList.toggle('filled', i <= step);
-            });
-
-            // Botão final
+            // Ativa o botão para passar para a Sala dos Cristos no último ecrã
             if (d.final) {
                 btnNext.style.display = 'none';
                 nextBtn.classList.add('visible');
             }
         }
 
-        // Avançar diálogo ao clicar na seta
         btnNext.addEventListener('click', () => {
             if (currentStep < dialogues.length - 1) {
                 currentStep++;
@@ -147,10 +125,10 @@
             }
         });
 
-        // Estado inicial
-        updateUI(0);
-        avatar.classList.add('hidden');
+        // Toca o primeiro áudio assim que a página estiver pronta e o utilizador interagir
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUI(0);
+        });
     </script>
-
 </body>
 </html>
