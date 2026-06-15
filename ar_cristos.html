@@ -154,7 +154,7 @@
             text-decoration: none;
         }
 
-        /* Pegadas HTML */
+        /* Estilo para as pegadas com ILUSÃO DE CHÃO 3D (Perspetiva) */
         .html-pegadas-screen {
             display: none;
             position: absolute;
@@ -166,48 +166,9 @@
             pointer-events: none;
             opacity: 0.8; 
         }
-
-        /* Ecrã de Carregamento Personalizado */
-        #ar-loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #DDA128;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #FFFDF9;
-        }
-        .ar-spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid rgba(255, 253, 249, 0.3);
-            border-top: 6px solid #FFFDF9;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        #ar-loading p {
-            font-size: 18px;
-            font-family: Arial, sans-serif;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
-
-    <div id="ar-loading">
-        <div class="ar-spinner"></div>
-        <p>A preparar a sala...</p>
-    </div>
 
     <audio id="audio-cristos-1" src="Narrativas-Audios/2 Sala dos cristos 1.mp3"></audio>
     <audio id="audio-cristos-2" src="Narrativas-Audios/2 Sala dos cristos 2.mp3"></audio>
@@ -217,7 +178,7 @@
 
     <img id="html-pegadas" class="html-pegadas-screen" src="Elementos-AR/pegadas.gif" alt="Pegadas de transição">
 
-    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind; uiLoading: #ar-loading;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
         <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false"></a-camera>
         
@@ -273,9 +234,7 @@
 
     <script>
         const telasFluxo = [
-            // AQUI ESTÁ A LÓGICA DO CRISTO 1 NA PRIMEIRA FALA
             { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo1.png", state: "text", audioId: "audio-cristos-1" },
-            // AQUI ESTÁ A LÓGICA DO CRISTO 2 NA SEGUNDA FALA
             { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "text", audioId: "audio-cristos-2" },
             { 
                 text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
