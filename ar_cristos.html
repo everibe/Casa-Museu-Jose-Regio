@@ -218,14 +218,14 @@
             { 
                 text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
                 dialogBg: "#A64B2A", // Cor Ferrugem/Castanho
-                showRegio: false, showCross: true, crossImg: "Icones/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
+                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
                 options: ["Decoração de igrejas", "Enxoval das noivas", "Oferendas fúnebres", "Amuletos de viagem"],
                 correctIndex: 1
             },
             { 
                 text: "Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento como proteção do lar.", 
                 dialogBg: "#8B8237", // Verde Oliva
-                showRegio: false, showCross: true, crossImg: "Icones/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
+                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
             },
             { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-3" },
             { text: "", state: "final", audioId: null }
@@ -384,6 +384,7 @@
             }
         });
 
+        // Redireciona diretamente para a Revelação quando concluído
         function concluirSala() {
             localStorage.setItem('cristosConcluido', 'true');
             window.location.href = "revelacao.html";
