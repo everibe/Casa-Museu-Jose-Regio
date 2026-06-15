@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada Completa - Casa do Régio</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Desativa o efeito de salto (hover) porque não são mais clicáveis */
+        .map-node.active .node-circle {
+            cursor: default;
+        }
+        .map-node.active .node-circle:hover {
+            transform: none;
+            box-shadow: 0 8px 16px rgba(139, 130, 55, 0.25);
+        }
+    </style>
+</head>
+<body class="jornada-page">
+
+    <div class="app-container">
+        <header class="jornada-header">
+            <h1 class="title-brand-jornada">Conheça a<br>casa do Régio</h1>
+            <a href="#" class="location-pin"><img src="Icones/pin.png" alt="Localização"></a>
+        </header>
+
+        <main class="map-view">
+            <div class="map-container" style="background-image: url('Icones/caminho-oliva.png');">
+                
+                <div class="map-node active" style="top: 15%; left: 35%;">
+                    <div class="node-circle"><img src="Icones/porta.png" alt="Hall de entrada"></div>
+                    <span class="node-label">Hall de<br>entrada</span>
+                </div>
+
+                <div class="map-node active" style="top: 32%; left: 75%;">
+                    <div class="node-circle"><img src="Icones/cruz-verde.png" alt="Sala dos Cristos"></div>
+                    <span class="node-label">Sala dos<br>Cristos</span>
+                </div>
+
+                <div class="map-node active" style="top: 35%; left: 35%;">
+                    <div class="node-circle"><img src="Icones/panela-oliva.png" alt="Cozinha"></div>
+                    <span class="node-label">Cozinha</span>
+                </div>
+
+                <div class="map-node active" style="top: 55%; left: 53%;">
+                    <div class="node-circle"><img src="Icones/livro-oliva.png" alt="Biblioteca"></div>
+                    <span class="node-label">Biblioteca</span>
+                </div>
+
+                <div class="map-node active" style="top: 75%; left: 75%;">
+                    <div class="node-circle"><img src="Icones/coroa-oliva.png" alt="Salão nobre"></div>
+                    <span class="node-label">Salão<br>nobre</span>
+                </div>
+
+                <div class="map-node active" style="top: 77%; left: 37%;">
+                    <div class="node-circle"><img src="Icones/cama-oliva.png" alt="Quarto do poeta"></div>
+                    <span class="node-label">Quarto<br>do poeta</span>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

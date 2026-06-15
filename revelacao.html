@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revelação - Régio Quest</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.revelacao-page {
+            background-color: var(--bg-card); /* Bege Claro (#FFEFD4) */
+            color: var(--olive-green); /* Verde Oliva (#8B8237) */
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        .revelacao-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 24px;
+            text-align: center;
+            min-height: 100vh;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Barra de Progresso (Verde Oliva) */
+        .rev-progress {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 4vh;
+        }
+        .rev-progress-seg {
+            flex: 1;
+            height: 8px;
+            border-radius: 9999px;
+            background-color: var(--olive-green);
+        }
+
+        /* Textos */
+        .rev-title {
+            font-family: var(--font-sans);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--olive-green);
+        }
+        .rev-subtitle {
+            font-family: var(--font-sans);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 4vh;
+            color: var(--olive-green);
+        }
+
+        /* Selo Andarilho */
+        .rev-badge {
+            width: 220px;
+            height: auto;
+            margin-bottom: 4vh;
+            filter: drop-shadow(0 8px 16px rgba(139, 130, 55, 0.15));
+        }
+
+        /* Citação */
+        .rev-quote {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.5;
+            font-weight: 500;
+            margin-bottom: 5vh;
+            padding: 0 10px;
+            color: var(--olive-green);
+        }
+
+        /* Botão Redondo Seta */
+        .btn-next-circle {
+            background-color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .btn-next-circle:active { transform: scale(0.95); }
+        .btn-next-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--olive-green);
+        }
+    </style>
+</head>
+<body class="revelacao-page">
+    <div class="revelacao-container">
+        
+        <div class="rev-progress">
+            <div class="rev-progress-seg"></div>
+            <div class="rev-progress-seg"></div>
+            <div class="rev-progress-seg"></div>
+            <div class="rev-progress-seg"></div>
+        </div>
+
+        <h1 class="rev-title" id="nome-jogador">João Ribeiro</h1>
+        <p class="rev-subtitle">Parabéns por<br>concluir sua jornada!</p>
+
+        <img src="Icones/andarilho.png" alt="Selo Andarilho" class="rev-badge">
+
+        <p class="rev-quote">
+            “Senão quando o amor de Deus;<br>
+            Ao vento que anda, desanda, e<br>
+            sarabanda, e ciranda, confia uma<br>
+            sementinha perdida entre terra e<br>
+            céus, e o vento a trás à varanda<br>
+            daquela minha janela”
+        </p>
+
+        <a href="jornada-completa.html" class="btn-next-circle">
+            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        </a>
+
+    </div>
+</body>
+</html>
