@@ -7,6 +7,7 @@
     
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mayognaise/aframe-gif-shader@master/dist/aframe-gif-shader.min.js"></script>
     
     <link rel="stylesheet" href="style.css">
     <style>
@@ -35,7 +36,7 @@
         .ar-dialog {
             width: 100%;
             min-height: 220px;
-            background: #DDA128; /* Ocre Padrão */
+            background: #DDA128; 
             border-radius: 32px 32px 0 0;
             padding: 30px 24px;
             display: flex;
@@ -43,7 +44,7 @@
             justify-content: space-between;
             box-sizing: border-box;
             border: none;
-            transition: background-color 0.4s ease, min-height 0.4s ease; /* Transição suave de cores */
+            transition: background-color 0.4s ease, min-height 0.4s ease; 
         }
 
         .ar-dialog-text {
@@ -55,7 +56,6 @@
             font-weight: 500;
         }
 
-        /* --- ESTILOS ESPECÍFICOS DO QUIZ --- */
         .cross-container {
             display: none;
             background: #FFFDF9;
@@ -83,7 +83,7 @@
             border: 2px solid transparent; 
             color: #333333; 
             padding: 14px 16px; 
-            border-radius: 30px; /* Formato Pílula */
+            border-radius: 30px; 
             text-align: center; 
             font-size: 14px; 
             font-weight: 600; 
@@ -107,7 +107,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        /* --- BOTÕES DE NAVEGAÇÃO --- */
         .nav-buttons-container {
             display: flex;
             justify-content: space-between;
@@ -132,7 +131,6 @@
         .btn-nav-circle svg { width: 28px; height: 28px; fill: #DDA128; transition: fill 0.4s ease; }
         .btn-nav-circle:disabled { opacity: 0; pointer-events: none; }
 
-        /* Botão Final Vermelho */
         .ar-next-btn-red {
             display: none;
             background: #B31A1A;
@@ -166,11 +164,26 @@
     <audio id="audio-cristos-5" src="Narrativas-Audios/2 Sala dos cristos 5.mp3"></audio>
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
-        <a-marker preset="hiro">
-            <a-image id="ar-regio-avatar" src="Icones/jose-regio.png" position="0 0.8 0" width="1.6" height="2.2" visible="true"></a-image>
-            <a-image id="ar-pegadas" src="Icones/pegadas.png" position="0 0.02 0.3" rotation="-90 0 0" width="1.8" height="1.8" visible="false"></a-image>
+        
+        <a-marker type="pattern" url="Elementos-AR/target.patt">
+            <a-image id="ar-regio-avatar" 
+                     src="Elementos-AR/jose-regio.png" 
+                     position="0 1.1 0" 
+                     width="1.6" 
+                     height="2.2" 
+                     visible="true">
+            </a-image>
+            
+            <a-entity id="ar-pegadas" 
+                      geometry="primitive: plane; width: 1.8; height: 1.8" 
+                      material="shader: gif; src: url(Elementos-AR/pegadas.gif); transparent: true" 
+                      position="0 0.05 1" 
+                      rotation="-90 0 0" 
+                      visible="false">
+            </a-entity>
         </a-marker>
-        <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
+        
+        <a-camera id="ar-camera" position="0 1.6 0"></a-camera>
     </a-scene>
 
     <div class="ar-overlay" id="ar-overlay">
@@ -213,22 +226,22 @@
 
     <script>
         const telasFluxo = [
-            { text: "Fiz por ele o que nunca faria por uma obra de arte de museu, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-1" },
-            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-2" },
+            { text: "Fiz por ele o que nunca faria por uma obra de arte de museu, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-1" },
+            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-2" },
             { 
                 text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
-                dialogBg: "#A64B2A", // Cor Ferrugem/Castanho
-                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
+                dialogBg: "#A64B2A", 
+                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
                 options: ["Decoração de igrejas", "Enxoval das noivas", "Oferendas fúnebres", "Amuletos de viagem"],
                 correctIndex: 1
             },
             { 
                 text: "Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento como proteção do lar.", 
-                dialogBg: "#8B8237", // Verde Oliva
-                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
+                dialogBg: "#8B8237", 
+                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
             },
-            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-3" },
-            { text: "", state: "final", audioId: null }
+            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-3" },
+            { text: "", state: "final", showRegio: false, showPegadas: true, audioId: null }
         ];
 
         const segments = document.querySelectorAll('.ar-progress-segment');
@@ -261,10 +274,8 @@
         function updateUI() {
             const data = telasFluxo[currentStep];
 
-            // Barra de Progresso
             segments.forEach((seg, i) => seg.classList.toggle('filled', i <= currentStep));
 
-            // Sincronizar Áudios
             pararTodosAudios();
             if (data.audioId) {
                 const som = document.getElementById(data.audioId);
@@ -284,12 +295,10 @@
             overlayInterface.style.display = 'flex';
             btnProxima.style.display = 'none';
             arRegio.setAttribute('visible', data.showRegio ? 'true' : 'false');
-            arPegadas.setAttribute('visible', 'false');
+            arPegadas.setAttribute('visible', data.showPegadas ? 'true' : 'false');
 
-            // Atualiza cores e elementos do Diálogo
             arDialog.style.backgroundColor = data.dialogBg;
             
-            // Gere a imagem do Cristo a ser exibida
             if (data.showCross) {
                 crossContainer.style.display = 'block';
                 crossImg.style.display = 'block';
@@ -298,11 +307,9 @@
                 crossContainer.style.display = 'none';
             }
             
-            // Muda a cor das setas SVG para combinar com o fundo
             const svgs = document.querySelectorAll('.btn-nav-circle svg');
             svgs.forEach(svg => svg.style.fill = data.dialogBg);
 
-            // Reseta Zonas
             quizZone.innerHTML = "";
             quizZone.style.display = "none";
             btnPrev.disabled = (currentStep === 0);
@@ -310,7 +317,7 @@
             if (data.state === "quiz") {
                 dialogText.textContent = data.text;
                 dialogText.style.textAlign = "center";
-                navZone.style.display = 'none'; // Obriga a clicar numa opção
+                navZone.style.display = 'none'; 
                 quizZone.style.display = "flex";
 
                 data.options.forEach((opcao, idx) => {
@@ -322,7 +329,6 @@
                             currentStep++;
                             updateUI();
                         } else {
-                            // Feedback Visual Errado (Tremidinha vermelha)
                             button.style.backgroundColor = '#ffcccc';
                             button.style.color = '#cc0000';
                             setTimeout(() => {
@@ -338,7 +344,6 @@
                 dialogText.textContent = "Para que serviam originalmente os Cristos de madeira no Alentejo?";
                 dialogText.style.textAlign = "center";
                 
-                // Pílula com a resposta certa
                 const correctPill = document.createElement('div');
                 correctPill.className = "quiz-option";
                 correctPill.style.display = "flex";
@@ -347,7 +352,6 @@
                 correctPill.style.cursor = "default";
                 correctPill.innerHTML = `Enxoval das noivas <svg width="20" height="20" viewBox="0 0 24 24" fill="#8B8237"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
                 
-                // Explicação textual abaixo
                 const explanation = document.createElement('div');
                 explanation.className = "feedback-explanation";
                 explanation.textContent = data.text;
@@ -356,12 +360,11 @@
                 quizZone.appendChild(explanation);
                 quizZone.style.display = "flex";
                 
-                // Mostra apenas o botão avançar centrado
                 navZone.style.display = 'flex';
                 navZone.style.justifyContent = 'center';
                 btnPrev.style.display = 'none';
 
-            } else { // Textos normais
+            } else { 
                 dialogText.textContent = data.text;
                 dialogText.style.textAlign = "left";
                 navZone.style.display = 'flex';
@@ -384,13 +387,11 @@
             }
         });
 
-        // Redireciona diretamente para a Revelação quando concluído
         function concluirSala() {
             localStorage.setItem('cristosConcluido', 'true');
             window.location.href = "revelacao.html";
         }
 
-        // Inicializar a primeira tela
         window.addEventListener('DOMContentLoaded', () => {
             updateUI();
         });

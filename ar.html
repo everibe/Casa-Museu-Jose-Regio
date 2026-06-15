@@ -7,12 +7,12 @@
     
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mayognaise/aframe-gif-shader@master/dist/aframe-gif-shader.min.js"></script>
     
     <link rel="stylesheet" href="style.css">
     <style>
         html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; width: 100%; height: 100%; }
         
-        /* Forçar o overlay a ocupar o ecrã inteiro e empurrar o conteúdo para baixo */
         .ar-overlay {
             position: absolute;
             top: 0;
@@ -26,7 +26,6 @@
             pointer-events: none;
         }
 
-        /* Caixa de Diálogo colada estritamente ao fundo da página (Aba Ocre) */
         .ar-bottom {
             width: 100%;
             padding: 0;
@@ -37,8 +36,8 @@
         .ar-dialog {
             width: 100%;
             min-height: 220px;
-            background: #DDA128; /* Tom ocre exato da imagem */
-            border-radius: 32px 32px 0 0; /* Bordas arredondadas apenas no topo */
+            background: #DDA128; 
+            border-radius: 32px 32px 0 0; 
             padding: 30px 24px;
             display: flex;
             flex-direction: column;
@@ -56,7 +55,6 @@
             font-weight: 500;
         }
 
-        /* Botões de Navegação com Círculo Branco do Figma */
         .nav-buttons-container {
             display: flex;
             justify-content: space-between;
@@ -82,7 +80,6 @@
         .btn-nav-circle svg { width: 28px; height: 28px; fill: #DDA128; }
         .btn-nav-circle:disabled { opacity: 0; pointer-events: none; }
 
-        /* Botão Próxima Sala Vermelho Isolado (Tela 10) */
         .ar-next-btn-red {
             display: none;
             background: #B31A1A;
@@ -115,20 +112,32 @@
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
         
-        <a-marker preset="hiro">
+        <a-marker type="pattern" url="Elementos-AR/target.patt">
             
-            <a-image id="ar-regio-avatar" src="Icones/jose-regio.png" position="0 0.8 0" width="1.6" height="2.2" visible="true"></a-image>
+            <a-image id="ar-regio-avatar" 
+                     src="Elementos-AR/jose-regio.png" 
+                     position="0 1.1 0" 
+                     width="1.6" 
+                     height="2.2" 
+                     visible="true">
+            </a-image>
             
-            <a-image id="ar-pegadas" src="Icones/pegadas.png" position="0 0.02 0.3" rotation="-90 0 0" width="1.8" height="1.8" visible="false"></a-image>
+            <a-entity id="ar-pegadas" 
+                      geometry="primitive: plane; width: 1.8; height: 1.8" 
+                      material="shader: gif; src: url(Elementos-AR/pegadas.gif); transparent: true" 
+                      position="0 0.05 1" 
+                      rotation="-90 0 0" 
+                      visible="false">
+            </a-entity>
             
         </a-marker>
         
-        <a-camera id="ar-camera" gps-camera rotation-reader></a-camera>
+        <a-camera id="ar-camera" position="0 1.6 0"></a-camera>
     </a-scene>
 
     <div class="ar-overlay" id="ar-overlay">
 
-        <div class="ar-progress-bar" id="ar-progress-bar" style="pointer-events: auto;">
+        <div class="ar-progress-bar" id="ar-progress-bar" style="pointer-events: auto; padding: 20px;">
             <div class="ar-progress-segment filled"></div>
             <div class="ar-progress-segment"></div>
             <div class="ar-progress-segment"></div>
@@ -166,7 +175,7 @@
             { text: "Deixei algo escondido nesta casa antes de partir. Nunca contei a ninguém. Se encontrares tudo, podes ficar com o segredo.", audioId: "audio-1", showRegio: true, showPegadas: false, isFinal: false },
             { text: "O edifício tem séculos de história. Foi convento, quartel de guerra e pensão.", audioId: "audio-2", showRegio: true, showPegadas: false, isFinal: false },
             { text: "Quando eu cheguei a Portalegre como professor, aluguei um quarto modesto, e fui ficando. Ao longo dos anos ocupei mais divisões, até me tornar o único hóspede da casa.", audioId: "audio-3", showRegio: true, showPegadas: false, isFinal: false },
-            { text: "", audioId: null, showRegio: false, showPegadas: true, isFinal: true } // Tela 10: Sem aba ocre, só pegadas AR e botão vermelho
+            { text: "", audioId: null, showRegio: false, showPegadas: true, isFinal: true } 
         ];
 
         const segments = document.querySelectorAll('.ar-progress-segment');
@@ -176,7 +185,6 @@
         const btnProxima = document.getElementById('btn-proxima-sala');
         const overlayInterface = document.getElementById('ar-overlay');
         
-        // Entidades AR
         const arRegio = document.getElementById('ar-regio-avatar');
         const arPegadas = document.getElementById('ar-pegadas');
 
@@ -193,27 +201,23 @@
             const current = dialogues[currentStep];
 
             if (current.isFinal) {
-                overlayInterface.style.display = 'none'; // Esconde a interface ocre e barra superior
-                btnProxima.style.display = 'block';     // Torna visível o botão vermelho
+                overlayInterface.style.display = 'none'; 
+                btnProxima.style.display = 'block';     
             } else {
                 overlayInterface.style.display = 'flex';
                 dialogText.textContent = current.text;
                 btnProxima.style.display = 'none';
             }
 
-            // Gerir botões de navegação
             btnPrev.disabled = (currentStep === 0);
 
-            // Atualizar barra de progresso
             segments.forEach((seg, i) => {
                 seg.classList.toggle('filled', i <= currentStep);
             });
 
-            // Gerir visibilidade AR
             arRegio.setAttribute('visible', current.showRegio);
             arPegadas.setAttribute('visible', current.showPegadas);
 
-            // Sincronizar Áudios
             pararTodosAudios();
             if (current.audioId) {
                 const som = document.getElementById(current.audioId);
