@@ -154,7 +154,6 @@
             text-decoration: none;
         }
 
-        /* Estilo para as pegadas com ILUSÃO DE CHÃO 3D (Perspetiva) */
         .html-pegadas-screen {
             display: none;
             position: absolute;
@@ -166,9 +165,47 @@
             pointer-events: none;
             opacity: 0.8; 
         }
+
+        #ar-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #DDA128;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #FFFDF9;
+        }
+        .ar-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 253, 249, 0.3);
+            border-top: 6px solid #FFFDF9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #ar-loading p {
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
+
+    <div id="ar-loading">
+        <div class="ar-spinner"></div>
+        <p>A preparar a sala...</p>
+    </div>
 
     <audio id="audio-cristos-1" src="Narrativas-Audios/2 Sala dos cristos 1.mp3"></audio>
     <audio id="audio-cristos-2" src="Narrativas-Audios/2 Sala dos cristos 2.mp3"></audio>
@@ -178,17 +215,33 @@
 
     <img id="html-pegadas" class="html-pegadas-screen" src="Elementos-AR/pegadas.gif" alt="Pegadas de transição">
 
-    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind; uiLoading: #ar-loading;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
         <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false"></a-camera>
         
         <a-entity mindar-image-target="targetIndex: 0">
             <a-image id="ar-regio-avatar" 
                      src="Elementos-AR/jose-regio.png" 
-                     position="0 0.2 0.1" 
-                     width="1.6" 
-                     height="2.2" 
+                     position="-0.4 0.2 0.1" 
+                     width="1.5" 
+                     height="2.1" 
                      visible="true">
+            </a-image>
+
+            <a-image id="ar-cristo-1" 
+                     src="Elementos-AR/cristo1.png" 
+                     position="0.6 0.1 0.15" 
+                     width="0.8" 
+                     height="1.6" 
+                     visible="false">
+            </a-image>
+
+            <a-image id="ar-cristo-2" 
+                     src="Elementos-AR/cristo2.png" 
+                     position="0.6 0.1 0.15" 
+                     width="0.8" 
+                     height="1.6" 
+                     visible="false">
             </a-image>
         </a-entity>
         
@@ -234,22 +287,28 @@
 
     <script>
         const telasFluxo = [
-            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo1.png", state: "text", audioId: "audio-cristos-1" },
-            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "text", audioId: "audio-cristos-2" },
+            // 1ª Fala: Ativa o Cristo 1 em AR (showArCristo1: true)
+            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showArCristo1: true, showArCristo2: false, showCrossUI: false, state: "text", audioId: "audio-cristos-1" },
+            // 2ª Fala: Ativa o Cristo 2 em AR (showArCristo2: true)
+            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showArCristo1: false, showArCristo2: true, showCrossUI: false, state: "text", audioId: "audio-cristos-2" },
+            // Quiz: Mantive a imagem do cristo na interface para combinar com as respostas
             { 
                 text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
                 dialogBg: "#A64B2A", 
-                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
+                showRegio: false, showArCristo1: false, showArCristo2: false, showCrossUI: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
                 options: ["Decoração de igrejas", "Enxoval das noivas", "Oferendas fúnebres", "Amuletos de viagem"],
                 correctIndex: 1
             },
+            // Feedback do Quiz
             { 
                 text: "Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento como proteção do lar.", 
                 dialogBg: "#8B8237", 
-                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
+                showRegio: false, showArCristo1: false, showArCristo2: false, showCrossUI: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
             },
-            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-3" },
-            { text: "", state: "final", showRegio: false, showCross: false, audioId: null }
+            // Fala Final
+            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showArCristo1: false, showArCristo2: false, showCrossUI: false, state: "text", audioId: "audio-cristos-3" },
+            // Final
+            { text: "", state: "final", showRegio: false, showArCristo1: false, showArCristo2: false, showCrossUI: false, audioId: null }
         ];
 
         const segments = document.querySelectorAll('.ar-progress-segment');
@@ -266,6 +325,8 @@
         const htmlPegadas = document.getElementById('html-pegadas');
         
         const arRegio = document.getElementById('ar-regio-avatar');
+        const arCristo1 = document.getElementById('ar-cristo-1');
+        const arCristo2 = document.getElementById('ar-cristo-2');
 
         let currentStep = 0;
 
@@ -296,6 +357,8 @@
                 overlayInterface.style.display = 'none';
                 btnProxima.style.display = 'block';
                 arRegio.setAttribute('visible', 'false');
+                arCristo1.setAttribute('visible', 'false');
+                arCristo2.setAttribute('visible', 'false');
                 htmlPegadas.style.display = 'block'; 
                 return;
             } else {
@@ -304,11 +367,16 @@
 
             overlayInterface.style.display = 'flex';
             btnProxima.style.display = 'none';
+            
+            // Controle dos elementos AR 3D
             arRegio.setAttribute('visible', data.showRegio ? 'true' : 'false');
+            arCristo1.setAttribute('visible', data.showArCristo1 ? 'true' : 'false');
+            arCristo2.setAttribute('visible', data.showArCristo2 ? 'true' : 'false');
 
             arDialog.style.backgroundColor = data.dialogBg;
             
-            if (data.showCross) {
+            // Controle da imagem na interface amarela (para o quiz)
+            if (data.showCrossUI) {
                 crossContainer.style.display = 'block';
                 crossImg.style.display = 'block';
                 crossImg.src = data.crossImg;
