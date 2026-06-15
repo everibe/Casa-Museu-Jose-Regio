@@ -153,6 +153,19 @@
             cursor: pointer;
             text-decoration: none;
         }
+
+        /* Estilo para as pegadas com ILUSÃO DE CHÃO 3D (Perspetiva) */
+        .html-pegadas-screen {
+            display: none;
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%) perspective(500px) rotateX(60deg); 
+            width: 200px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.8; 
+        }
     </style>
 </head>
 <body>
@@ -162,6 +175,8 @@
     <audio id="audio-cristos-3" src="Narrativas-Audios/2 Sala dos cristos 3.mp3"></audio>
     <audio id="audio-cristos-4" src="Narrativas-Audios/2 Sala dos cristos 4.mp3"></audio>
     <audio id="audio-cristos-5" src="Narrativas-Audios/2 Sala dos cristos 5.mp3"></audio>
+
+    <img id="html-pegadas" class="html-pegadas-screen" src="Elementos-AR/pegadas.gif" alt="Pegadas de transição">
 
     <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
@@ -175,13 +190,6 @@
                      height="2.2" 
                      visible="true">
             </a-image>
-            
-            <a-entity id="ar-pegadas" 
-                      geometry="primitive: plane; width: 1.8; height: 1.8" 
-                      material="shader: gif; src: url(Elementos-AR/pegadas.gif); transparent: true" 
-                      position="0 -0.5 0.1" 
-                      visible="false">
-            </a-entity>
         </a-entity>
         
     </a-scene>
@@ -226,22 +234,22 @@
 
     <script>
         const telasFluxo = [
-            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-1" },
-            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-2" },
+            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo1.png", state: "text", audioId: "audio-cristos-1" },
+            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "text", audioId: "audio-cristos-2" },
             { 
                 text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
                 dialogBg: "#A64B2A", 
-                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
+                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
                 options: ["Decoração de igrejas", "Enxoval das noivas", "Oferendas fúnebres", "Amuletos de viagem"],
                 correctIndex: 1
             },
             { 
                 text: "Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento como proteção do lar.", 
                 dialogBg: "#8B8237", 
-                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
+                showRegio: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
             },
-            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-3" },
-            { text: "", state: "final", showRegio: false, showPegadas: true, audioId: null }
+            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showCross: false, state: "text", audioId: "audio-cristos-3" },
+            { text: "", state: "final", showRegio: false, showCross: false, audioId: null }
         ];
 
         const segments = document.querySelectorAll('.ar-progress-segment');
@@ -255,9 +263,9 @@
         const arDialog = document.getElementById('ar-dialog');
         const crossContainer = document.getElementById('cross-image-container');
         const crossImg = document.getElementById('cross-image');
+        const htmlPegadas = document.getElementById('html-pegadas');
         
         const arRegio = document.getElementById('ar-regio-avatar');
-        const arPegadas = document.getElementById('ar-pegadas');
 
         let currentStep = 0;
 
@@ -288,14 +296,15 @@
                 overlayInterface.style.display = 'none';
                 btnProxima.style.display = 'block';
                 arRegio.setAttribute('visible', 'false');
-                arPegadas.setAttribute('visible', 'true');
+                htmlPegadas.style.display = 'block'; 
                 return;
+            } else {
+                htmlPegadas.style.display = 'none'; 
             }
 
             overlayInterface.style.display = 'flex';
             btnProxima.style.display = 'none';
             arRegio.setAttribute('visible', data.showRegio ? 'true' : 'false');
-            arPegadas.setAttribute('visible', data.showPegadas ? 'true' : 'false');
 
             arDialog.style.backgroundColor = data.dialogBg;
             
