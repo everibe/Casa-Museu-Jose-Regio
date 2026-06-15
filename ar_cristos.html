@@ -12,79 +12,389 @@
     <link rel="stylesheet" href="style.css">
     <style>
         html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; width: 100%; height: 100%; }
-        .ar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
-        .ar-bottom { width: 100%; padding: 0; margin: 0; pointer-events: auto; }
-        .ar-dialog { width: 100%; min-height: 220px; background: #DDA128; border-radius: 32px 32px 0 0; padding: 30px 24px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; border: none; transition: background-color 0.4s ease, min-height 0.4s ease; }
-        .ar-dialog-text { color: #FFFFFF; font-size: 16px; line-height: 1.5; text-align: left; margin: 0 0 20px 0; font-weight: 500; }
-        .cross-container { display: none; background: #FFFDF9; border-radius: 16px; padding: 15px; margin: 0 auto 20px auto; text-align: center; width: 140px; height: 140px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .ar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .ar-bottom {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            pointer-events: auto;
+        }
+
+        .ar-dialog {
+            width: 100%;
+            min-height: 220px;
+            background: #DDA128; 
+            border-radius: 32px 32px 0 0;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            border: none;
+            transition: background-color 0.4s ease, min-height 0.4s ease; 
+        }
+
+        .ar-dialog-text {
+            color: #FFFFFF;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: left;
+            margin: 0 0 20px 0;
+            font-weight: 500;
+        }
+
+        .cross-container {
+            display: none;
+            background: #FFFDF9;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+            width: 140px;
+            height: 140px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
         .cross-container img { height: 100%; object-fit: contain; }
-        .quiz-container { display: none; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 20px; }
-        .quiz-option { background: #FFFDF9; border: 2px solid transparent; color: #333333; padding: 14px 16px; border-radius: 30px; text-align: center; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .feedback-explanation { background: #FFFDF9; color: #333333; padding: 20px; border-radius: 16px; font-size: 14px; font-weight: 500; text-align: left; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .nav-buttons-container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .btn-nav-circle { background: #FFFDF9; border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .ar-next-btn-red { display: none; background: #B31A1A; color: #FFFFFF; border: none; padding: 16px 0; font-size: 15px; font-weight: bold; text-transform: uppercase; border-radius: 25px; width: 85%; text-align: center; position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 25; cursor: pointer; }
+
+        .quiz-container { 
+            display: none; 
+            flex-direction: column; 
+            gap: 12px; 
+            width: 100%; 
+            margin-bottom: 20px; 
+        }
+
+        .quiz-option { 
+            background: #FFFDF9; 
+            border: 2px solid transparent; 
+            color: #333333; 
+            padding: 14px 16px; 
+            border-radius: 30px; 
+            text-align: center; 
+            font-size: 14px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .quiz-option:active { transform: scale(0.98); }
+
+        .feedback-explanation {
+            background: #FFFDF9;
+            color: #333333;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.4;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .btn-nav-circle {
+            background: #FFFDF9;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease;
+        }
+        .btn-nav-circle:active { transform: scale(0.9); }
+        .btn-nav-circle svg { width: 28px; height: 28px; fill: #DDA128; transition: fill 0.4s ease; }
+        .btn-nav-circle:disabled { opacity: 0; pointer-events: none; }
+
+        .ar-next-btn-red {
+            display: none;
+            background: #B31A1A;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 0;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            width: 85%;
+            text-align: center;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
+            box-shadow: 0 4px 15px rgba(179,26,26,0.4);
+            cursor: pointer;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
-    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind;" vr-mode-ui="enabled: false">
+    <audio id="audio-cristos-1" src="Narrativas-Audios/2 Sala dos cristos 1.mp3"></audio>
+    <audio id="audio-cristos-2" src="Narrativas-Audios/2 Sala dos cristos 2.mp3"></audio>
+    <audio id="audio-cristos-3" src="Narrativas-Audios/2 Sala dos cristos 3.mp3"></audio>
+    <audio id="audio-cristos-4" src="Narrativas-Audios/2 Sala dos cristos 4.mp3"></audio>
+    <audio id="audio-cristos-5" src="Narrativas-Audios/2 Sala dos cristos 5.mp3"></audio>
+
+    <a-scene id="ar-scene" mindar-image="imageTargetSrc: Elementos-AR/target.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        
         <a-camera id="ar-camera" position="0 0 0" look-controls="enabled: false"></a-camera>
+        
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-image id="ar-regio-avatar" src="Elementos-AR/jose-regio.png" position="0 0.2 0.1" width="1.6" height="2.2" visible="true"></a-image>
-            <a-image id="ar-cristo1" src="Elementos-AR/cristo1.png" position="0 0.2 0.1" width="1.2" height="1.2" visible="false"></a-image>
-            <a-image id="ar-cristo2" src="Elementos-AR/cristo2.png" position="0 0.2 0.1" width="1.2" height="1.2" visible="false"></a-image>
-            <a-entity id="ar-pegadas" geometry="primitive: plane; width: 1.8; height: 1.8" material="shader: gif; src: url(Elementos-AR/pegadas.gif); transparent: true" position="0 -0.5 0.1" visible="false"></a-entity>
+            <a-image id="ar-regio-avatar" 
+                     src="Elementos-AR/jose-regio.png" 
+                     position="0 0.2 0.1" 
+                     width="1.6" 
+                     height="2.2" 
+                     visible="true">
+            </a-image>
+            
+            <a-entity id="ar-pegadas" 
+                      geometry="primitive: plane; width: 1.8; height: 1.8" 
+                      material="shader: gif; src: url(Elementos-AR/pegadas.gif); transparent: true" 
+                      position="0 -0.5 0.1" 
+                      visible="false">
+            </a-entity>
         </a-entity>
+        
     </a-scene>
 
     <div class="ar-overlay" id="ar-overlay">
-        <div class="ar-bottom">
+
+        <div class="ar-progress-bar" id="ar-progress-bar" style="pointer-events: auto; padding: 20px;">
+            <div class="ar-progress-segment filled"></div>
+            <div class="ar-progress-segment"></div>
+            <div class="ar-progress-segment"></div>
+            <div class="ar-progress-segment"></div>
+            <div class="ar-progress-segment"></div>
+        </div>
+
+        <div class="ar-bottom" id="ar-bottom">
             <div class="ar-dialog" id="ar-dialog">
-                <div id="cross-image-container" class="cross-container"><img id="cross-image" src="" alt="Cristo"></div>
+                
+                <div id="cross-image-container" class="cross-container">
+                    <img id="cross-image" src="" alt="Cristo de Madeira" onerror="this.style.display='none'">
+                </div>
+
                 <p class="ar-dialog-text" id="ar-dialog-text"></p>
+                
                 <div class="quiz-container" id="quiz-options-zone"></div>
+                
                 <div class="nav-buttons-container" id="nav-buttons-zone">
-                    <button class="btn-nav-circle" id="btn-prev-dialog"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg></button>
-                    <button class="btn-nav-circle" id="btn-next-dialog"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></button>
+                    <button class="btn-nav-circle" id="btn-prev-dialog" aria-label="Voltar">
+                        <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                    </button>
+
+                    <button class="btn-nav-circle" id="btn-next-dialog" aria-label="Avançar">
+                        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <button class="ar-next-btn-red" id="btn-proxima-sala" onclick="window.location.href='revelacao.html'">Próxima Sala</button>
+    <button class="ar-next-btn-red" id="btn-proxima-sala" onclick="concluirSala()">
+        Próxima Sala
+    </button>
 
     <script>
         const telasFluxo = [
-            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum...", showRegio: false, showCristo1: true, showCristo2: false, showPegadas: false, state: "text" },
-            { text: "Eu colecionei mais de 400 figuras de Cristo...", showRegio: false, showCristo1: false, showCristo2: true, showPegadas: false, state: "text" },
-            { text: "Para que serviam originalmente os Cristos?", showRegio: false, showCristo1: false, showCristo2: false, showPegadas: false, state: "quiz", options: ["Decoração", "Enxoval"], correctIndex: 1 },
-            { text: "Os Cristos faziam parte do enxoval...", showRegio: false, showCristo1: false, showCristo2: false, showPegadas: false, state: "text" },
-            { text: "", state: "final", showRegio: false, showCristo1: false, showCristo2: false, showPegadas: true }
+            { text: "Fiz por ele o que nunca faria por uma obra de arte de museum, tratei-o como se fosse vivo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-1" },
+            { text: "Eu colecionei mais de 400 figuras de Cristo, a maioria em madeira. Esses Cristos possuíam uma simbologia de proteção do lar e na minha época, era costume dá-los de presente em momentos especiais da vida.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-2" },
+            { 
+                text: "Para que serviam originalmente os Cristos de madeira no Alentejo?", 
+                dialogBg: "#A64B2A", 
+                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo2.png", state: "quiz", audioId: "audio-cristos-4",
+                options: ["Decoração de igrejas", "Enxoval das noivas", "Oferendas fúnebres", "Amuletos de viagem"],
+                correctIndex: 1
+            },
+            { 
+                text: "Os Cristos faziam parte do enxoval das noivas no Alentejo e eram oferecidos no casamento como proteção do lar.", 
+                dialogBg: "#8B8237", 
+                showRegio: false, showPegadas: false, showCross: true, crossImg: "Elementos-AR/cristo3.png", state: "feedback", audioId: "audio-cristos-5"
+            },
+            { text: "O homem que me vendeu este Cristo tinha fome. Fui à cozinha buscar-lhe algo.", dialogBg: "#DDA128", showRegio: true, showPegadas: false, showCross: false, state: "text", audioId: "audio-cristos-3" },
+            { text: "", state: "final", showRegio: false, showPegadas: true, audioId: null }
         ];
 
-        let currentStep = 0;
+        const segments = document.querySelectorAll('.ar-progress-segment');
+        const dialogText = document.getElementById('ar-dialog-text');
+        const quizZone   = document.getElementById('quiz-options-zone');
+        const navZone    = document.getElementById('nav-buttons-zone');
+        const btnPrev    = document.getElementById('btn-prev-dialog');
+        const btnNext    = document.getElementById('btn-next-dialog');
+        const btnProxima = document.getElementById('btn-proxima-sala');
+        const overlayInterface = document.getElementById('ar-overlay');
+        const arDialog = document.getElementById('ar-dialog');
+        const crossContainer = document.getElementById('cross-image-container');
+        const crossImg = document.getElementById('cross-image');
+        
         const arRegio = document.getElementById('ar-regio-avatar');
-        const arCristo1 = document.getElementById('ar-cristo1');
-        const arCristo2 = document.getElementById('ar-cristo2');
         const arPegadas = document.getElementById('ar-pegadas');
+
+        let currentStep = 0;
+
+        function pararTodosAudios() {
+            ['audio-cristos-1', 'audio-cristos-2', 'audio-cristos-3', 'audio-cristos-4', 'audio-cristos-5'].forEach(id => {
+                const a = document.getElementById(id);
+                if (a) { 
+                    a.pause(); 
+                    a.currentTime = 0; 
+                }
+            });
+        }
 
         function updateUI() {
             const data = telasFluxo[currentStep];
+
+            segments.forEach((seg, i) => seg.classList.toggle('filled', i <= currentStep));
+
+            pararTodosAudios();
+            if (data.audioId) {
+                const som = document.getElementById(data.audioId);
+                if (som) {
+                    som.play().catch(e => console.log("Áudio aguardando clique de interação."));
+                }
+            }
+
+            if (data.state === "final") {
+                overlayInterface.style.display = 'none';
+                btnProxima.style.display = 'block';
+                arRegio.setAttribute('visible', 'false');
+                arPegadas.setAttribute('visible', 'true');
+                return;
+            }
+
+            overlayInterface.style.display = 'flex';
+            btnProxima.style.display = 'none';
             arRegio.setAttribute('visible', data.showRegio ? 'true' : 'false');
-            arCristo1.setAttribute('visible', data.showCristo1 ? 'true' : 'false');
-            arCristo2.setAttribute('visible', data.showCristo2 ? 'true' : 'false');
             arPegadas.setAttribute('visible', data.showPegadas ? 'true' : 'false');
+
+            arDialog.style.backgroundColor = data.dialogBg;
             
-            document.getElementById('ar-dialog-text').textContent = data.text;
-            document.getElementById('ar-overlay').style.display = (data.state === "final") ? 'none' : 'flex';
-            document.getElementById('btn-proxima-sala').style.display = (data.state === "final") ? 'block' : 'none';
+            if (data.showCross) {
+                crossContainer.style.display = 'block';
+                crossImg.style.display = 'block';
+                crossImg.src = data.crossImg;
+            } else {
+                crossContainer.style.display = 'none';
+            }
+            
+            const svgs = document.querySelectorAll('.btn-nav-circle svg');
+            svgs.forEach(svg => svg.style.fill = data.dialogBg);
+
+            quizZone.innerHTML = "";
+            quizZone.style.display = "none";
+            btnPrev.disabled = (currentStep === 0);
+
+            if (data.state === "quiz") {
+                dialogText.textContent = data.text;
+                dialogText.style.textAlign = "center";
+                navZone.style.display = 'none'; 
+                quizZone.style.display = "flex";
+
+                data.options.forEach((opcao, idx) => {
+                    const button = document.createElement('button');
+                    button.className = "quiz-option";
+                    button.textContent = opcao;
+                    button.onclick = () => {
+                        if (idx === data.correctIndex) {
+                            currentStep++;
+                            updateUI();
+                        } else {
+                            button.style.backgroundColor = '#ffcccc';
+                            button.style.color = '#cc0000';
+                            setTimeout(() => {
+                                button.style.backgroundColor = '#FFFDF9';
+                                button.style.color = '#333333';
+                            }, 500);
+                        }
+                    };
+                    quizZone.appendChild(button);
+                });
+
+            } else if (data.state === "feedback") {
+                dialogText.textContent = "Para que serviam originalmente os Cristos de madeira no Alentejo?";
+                dialogText.style.textAlign = "center";
+                
+                const correctPill = document.createElement('div');
+                correctPill.className = "quiz-option";
+                correctPill.style.display = "flex";
+                correctPill.style.justifyContent = "space-between";
+                correctPill.style.alignItems = "center";
+                correctPill.style.cursor = "default";
+                correctPill.innerHTML = `Enxoval das noivas <svg width="20" height="20" viewBox="0 0 24 24" fill="#8B8237"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+                
+                const explanation = document.createElement('div');
+                explanation.className = "feedback-explanation";
+                explanation.textContent = data.text;
+
+                quizZone.appendChild(correctPill);
+                quizZone.appendChild(explanation);
+                quizZone.style.display = "flex";
+                
+                navZone.style.display = 'flex';
+                navZone.style.justifyContent = 'center';
+                btnPrev.style.display = 'none';
+
+            } else { 
+                dialogText.textContent = data.text;
+                dialogText.style.textAlign = "left";
+                navZone.style.display = 'flex';
+                navZone.style.justifyContent = 'space-between';
+                btnPrev.style.display = 'flex';
+            }
         }
 
-        document.getElementById('btn-next-dialog').addEventListener('click', () => { if(currentStep < telasFluxo.length-1) { currentStep++; updateUI(); } });
-        document.getElementById('btn-prev-dialog').addEventListener('click', () => { if(currentStep > 0) { currentStep--; updateUI(); } });
-        
-        updateUI();
+        btnNext.addEventListener('click', () => {
+            if (currentStep < telasFluxo.length - 1) {
+                currentStep++;
+                updateUI();
+            }
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        });
+
+        function concluirSala() {
+            localStorage.setItem('cristosConcluido', 'true');
+            window.location.href = "revelacao.html";
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
     </script>
 </body>
 </html>
