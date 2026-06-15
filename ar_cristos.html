@@ -2,21 +2,21 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sala dos Cristos - Régio Quest</title>
+    
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    <link rel="stylesheet" href="style.css">
+    
     <style>
         html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; width: 100%; height: 100%; }
-        /* Interface amarela limpa */
         .ar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         .ar-bottom { width: 100%; pointer-events: auto; }
-        .ar-dialog { width: 100%; min-height: 200px; background: #DDA128; border-radius: 32px 32px 0 0; padding: 30px; }
-        .ar-dialog-text { color: #FFFFFF; font-size: 16px; margin: 0; }
+        .ar-dialog { width: 100%; min-height: 200px; background: #DDA128; border-radius: 32px 32px 0 0; padding: 30px; box-sizing: border-box; }
+        .ar-dialog-text { color: #FFFFFF; font-size: 16px; margin: 0; font-family: sans-serif; }
         .quiz-container { display: none; flex-direction: column; gap: 10px; width: 100%; margin-top: 15px; }
-        .quiz-option { background: #FFFDF9; padding: 12px; border-radius: 20px; text-align: center; cursor: pointer; }
-        .ar-next-btn-red { display: none; background: #B31A1A; color: white; padding: 15px; border-radius: 25px; width: 80%; margin: 0 auto 40px; text-align: center; text-decoration: none; position: absolute; bottom: 20px; left: 10%; z-index: 20; }
+        .quiz-option { background: #FFFDF9; padding: 12px; border-radius: 20px; text-align: center; cursor: pointer; font-family: sans-serif; font-weight: bold; }
+        .ar-next-btn-red { display: none; background: #B31A1A; color: white; padding: 15px; border-radius: 25px; width: 80%; margin: 0 auto 40px; text-align: center; text-decoration: none; position: absolute; bottom: 20px; left: 10%; z-index: 20; font-family: sans-serif; font-weight: bold; }
         .html-pegadas-screen { display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) perspective(500px) rotateX(60deg); width: 150px; z-index: 5; opacity: 0.8; }
     </style>
 </head>
@@ -27,8 +27,8 @@
     <a-scene mindar-image="imageTargetSrc: Elementos-AR/target.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-image id="ar-cristo-1" src="Elementos-AR/cristo1.png" position="0 0.1 0" width="1.0" height="1.8" visible="false"></a-image>
-            <a-image id="ar-cristo-2" src="Elementos-AR/cristo2.png" position="0 0.1 0" width="1.0" height="1.8" visible="false"></a-image>
+            <a-image id="ar-cristo-1" src="Elementos-AR/cristo1.png" position="0 0.1 0" width="1.2" height="2.0" visible="false"></a-image>
+            <a-image id="ar-cristo-2" src="Elementos-AR/cristo2.png" position="0 0.1 0" width="1.2" height="2.0" visible="false"></a-image>
         </a-entity>
     </a-scene>
 
@@ -55,4 +55,37 @@
         const dialogText = document.getElementById('ar-dialog-text');
         const arCristo1 = document.getElementById('ar-cristo-1');
         const arCristo2 = document.getElementById('ar-cristo-2');
-        const quizZone = document.getElementById('
+        const quizZone = document.getElementById('quiz-options-zone');
+        const overlay = document.getElementById('ar-overlay');
+        const btnNext = document.getElementById('btn-proxima-sala');
+        const pegadas = document.getElementById('html-pegadas');
+
+        function updateUI() {
+            const data = telasFluxo[currentStep];
+            if(data.state === "final") {
+                overlay.style.display = 'none';
+                btnNext.style.display = 'block';
+                pegadas.style.display = 'block';
+                return;
+            }
+            dialogText.textContent = data.text;
+            arCristo1.setAttribute('visible', data.showArCristo1);
+            arCristo2.setAttribute('visible', data.showArCristo2);
+            
+            if(data.state === "quiz") {
+                quizZone.style.display = "flex";
+                data.options.forEach((opt, i) => {
+                    const b = document.createElement('div');
+                    b.className = "quiz-option"; b.textContent = opt;
+                    b.onclick = () => { if(i === data.correct) { currentStep++; updateUI(); } };
+                    quizZone.appendChild(b);
+                });
+            } else {
+                setTimeout(() => { currentStep++; updateUI(); }, 5000);
+            }
+        }
+        function concluirSala() { window.location.href = "revelacao.html"; }
+        window.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+</body>
+</html>
